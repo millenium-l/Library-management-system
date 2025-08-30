@@ -5,5 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Login</title>
   </head>
-  <body></body>
+  <body>
+    <h1>Login Form</h1>
+    <form action="" method="POST">
+      {% csrf_token %} {{ form.as_p }}
+      <button type="submit">Login Now</button>
+    </form>
+  </body>
 </html>
