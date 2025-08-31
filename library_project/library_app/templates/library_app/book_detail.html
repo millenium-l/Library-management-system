@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>book_detail</title>
+  </head>
+  <body>
+    <h2>{{ book.title }}</h2>
+    <p>Author: {{ book.author }}</p>
+    <p>ISBN: {{ book.isbn }}</p>
+    <p>description: <br />{{ book.description }}</p>
+    <button style="border-radius: 5px; background-color: lightgray">
+      <a
+        href="{% url 'book_list' %}"
+        style="
+          text-decoration: none;
+          color: black;
+          text-align: center;
+          padding: 100px;
+          margin: 10px;
+        "
+        >list
+      </a>
+    </button>
+  </body>
+</html>

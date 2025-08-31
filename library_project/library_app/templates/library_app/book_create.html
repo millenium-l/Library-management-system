@@ -12,7 +12,14 @@
     />
   </head>
   <body>
-    <h2>This is the dashboard</h2>
+    <h1>Add a new book</h1>
+    <div>
+      <form action="{% url 'book_create' %}" method="POST">
+        {% csrf_token %} {{ form.as_p }}
+
+        <button type="submit">create a book</button>
+      </form>
+    </div>
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"

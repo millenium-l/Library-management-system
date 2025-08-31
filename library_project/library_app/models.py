@@ -20,6 +20,7 @@ class Book(models.Model):
     author = models.CharField(max_length=255)
     isbn = models.CharField(max_length=13, unique=True)
     category = models.CharField(max_length=100)
+    description = models.TextField(blank=True)  # NEW field
     total_copies = models.PositiveIntegerField()
     available_copies = models.PositiveIntegerField()
 

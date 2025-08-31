@@ -10,7 +10,7 @@ class ProfileAdmin(admin.ModelAdmin):
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'isbn', 'category', 'total_copies', 'available_copies')
+    list_display = ('title', 'author', 'isbn', 'category', 'description', 'total_copies', 'available_copies')
     search_fields = ('title', 'author', 'isbn')
     list_filter = ('category',)
 
