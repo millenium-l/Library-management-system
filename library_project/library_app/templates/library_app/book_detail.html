@@ -10,18 +10,47 @@
     <p>Author: {{ book.author }}</p>
     <p>ISBN: {{ book.isbn }}</p>
     <p>description: <br />{{ book.description }}</p>
-    <button style="border-radius: 5px; background-color: lightgray">
+    <button
+      style="
+        border-radius: 5px;
+        background-color: lightgray;
+        padding: 5px;
+        margin: 5px;
+        width: 20%;
+      "
+    >
       <a
         href="{% url 'book_list' %}"
-        style="
-          text-decoration: none;
-          color: black;
-          text-align: center;
-          padding: 100px;
-          margin: 10px;
-        "
-        >list
-      </a>
+        style="text-decoration: none; color: blue; text-align: center"
+        >Back to list
+      </a></button
+    ><br />
+    <button
+      style="
+        padding: 5px;
+        margin: 10px;
+        width: 20%;
+        border-radius: 5px;
+        color: lightgray;
+      "
+    >
+      <a href="{% url 'book_update' book.id %}" style="text-decoration: none"
+        >Update this book</a
+      >
+    </button>
+
+    <button
+      style="
+        padding: 5px;
+        margin: 10px;
+        width: 20%;
+        border-radius: 5px;
+        color: lightgray;
+      "
+    >
+      <a href="{% url 'book_delete' book.id %}" style="text-decoration: none"
+        >Delete this book</a
+      >
     </button>
   </body>
 </html>

@@ -32,3 +32,21 @@ def book_create(request):
 
     return render(request, 'library_app/book_create.html', {'form': form})
 
+def book_update(request, id):
+    book = get_object_or_404(Book, id=id)
+    if request.method == 'POST':
+        form = BookForm(request.POST, instance=book)
+        if form.is_valid():
+            form.save()
+            return redirect('book_list')
+    else:
+        form = BookForm(instance=book)
+    return render(request, 'library_app/book_update.html', {'form': form})
+
+def book_delete(request, id):
+    book = get_object_or_404(Book, id=id)
+    if request.method == 'POST':
+        book.delete()
+        return redirect('book_list')
+    
+    return render(request, 'library_app/book_delete.html', {'book': book})
