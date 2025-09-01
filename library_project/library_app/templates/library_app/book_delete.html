@@ -1,41 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}Library System{% endblock %}</title>
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-      integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB"
-      crossorigin="anonymous"
-    />
-  </head>
-  <body>
-    <h1>Delete a book</h1>
-    <div>
-      <form method="POST">
-        {% csrf_token %}
+{% extends 'base.html' %} {% block content %}
+<body>
+  <h1>Delete a book</h1>
+  <div>
+    <form method="POST">
+      {% csrf_token %}
 
-        <p>Are you sure you want to delete {{ book.title }} ?</p>
+      <p>Are you sure you want to delete {{ book.title }} ?</p>
 
-        {{ form.as_p }}
+      {{ form.as_p }}
 
-        <button type="submit">YES</button>
-        <button type="submit">
-          <a
-            href="{% url 'book_list' %}"
-            style="text-decoration: none; color: black"
-            >No</a
-          >
-        </button>
-      </form>
-    </div>
+      <button type="submit">YES</button>
+      <button type="submit">
+        <a
+          href="{% url 'book_list' %}"
+          style="text-decoration: none; color: black"
+          >No</a
+        >
+      </button>
+    </form>
+  </div>
 
-    <script
-      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-      integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-      crossorigin="anonymous"
-    ></script>
-  </body>
-</html>
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
+    crossorigin="anonymous"
+  ></script>
+</body>
+{% endblock content %}

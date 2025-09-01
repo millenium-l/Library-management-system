@@ -1,28 +1,22 @@
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Book_list</title>
-  </head>
-  <body>
-    <h1>Lits of books</h1>
-    <hr />
+{% extends 'base.html' %} {% block content %}
+<body>
+  <h1>Lits of books</h1>
+  <hr />
 
-    <a href="{% url 'book_create' %}">Add a book</a>
-    <ol>
-      {% for book in books %}
+  <a href="{% url 'book_create' %}">Add a book</a>
+  <ol>
+    {% for book in books %}
 
-      <li>
-        <h2><a href="{% url  'book_detail' book.id %}">{{ book.title }}</a></h2>
-        <p>Author: {{ book.author }}</p>
-        <p>ISBN: {{ book.isbn }}</p>
-        <p>Total copies: {{ book.total_copies }}</p>
-        <p>Available Copies: {{ book.available_copies }}</p>
+    <li>
+      <h2><a href="{% url  'book_detail' book.id %}">{{ book.title }}</a></h2>
+      <p>Author: {{ book.author }}</p>
+      <p>ISBN: {{ book.isbn }}</p>
+      <p>Total copies: {{ book.total_copies }}</p>
+      <p>Available Copies: {{ book.available_copies }}</p>
 
-        <hr />
-        {% endfor %}
-      </li>
-    </ol>
-  </body>
-</html>
+      <hr />
+      {% endfor %}
+    </li>
+  </ol>
+</body>
+{% endblock content %}

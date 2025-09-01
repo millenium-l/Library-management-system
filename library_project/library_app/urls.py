@@ -2,7 +2,7 @@ from django.urls import path
 from .views import  dashboard, book_list, book_detail, issued_books, profile, book_create, book_update, book_delete
 
 urlpatterns = [
-    path('dashboard/', dashboard, name='dashboard'),
+    path('', dashboard, name='dashboard'),
     path('book_list/', book_list, name='book_list'),
     path('book_detail/<int:id>/', book_detail, name='book_detail'),
     path('issued_books/', issued_books, name='issued_books'),
