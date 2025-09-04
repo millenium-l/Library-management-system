@@ -7,7 +7,11 @@ from .forms import BookForm
 
 def dashboard(request):
     title = "Dashboard"
-    return render(request, 'library_app/dashboard.html', {'title': title})
+    context = {
+        'title': title,
+        'total_books': Book.objects.count(),
+    }
+    return render(request, 'library_app/dashboard.html', context)
 
 def profile(request):
     title = "Profile"

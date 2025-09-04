@@ -3,7 +3,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="{% static 'css/style.css' %}" />
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css"
@@ -12,16 +12,62 @@
       crossorigin="anonymous"
     />
     <title>LMS | {{ title }}</title>
+    <hr />
+    <style>
+      /* Fix the sidebar height */
+      body,
+      html {
+        height: 100%;
+        margin: 0;
+      }
+      .sidebar {
+        height: 100vh;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 220px;
+        background-color: #4c4f52; /* dark bg */
+        padding-top: 1rem;
+      }
+      .sidebar a {
+        color: #ddd;
+        padding: 10px 20px;
+        display: block;
+        text-decoration: none;
+      }
+      .sidebar a:hover {
+        background-color: #495057;
+        color: white;
+      }
+      .content {
+        margin-left: 220px;
+        padding: 2rem;
+      }
+    </style>
   </head>
   <body>
-    {% block content %} {% endblock content %}
+    <div class="sidebar">
+      <h4 class="text-white px-3 mb-3">LMS Menu</h4>
+      <a href="{% url 'dashboard' %}">Dashboard</a>
+      <a href="{% url 'book_list' %}">Books</a>
+      <a href="#">Profile</a>
+      <a href="#">Categories</a>
+      <!-- Add more links as needed -->
+    </div>
+
+    <div class="content">{% block content %} {% endblock content %}</div>
+
+    <footer
+      class="text-center py-3 mt-auto bg-light"
+      style="position: fixed; bottom: 0; width: 100%; margin-left: 220px"
+    >
+      copyright: Lee kimari
+    </footer>
 
     <script
       src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
       integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
       crossorigin="anonymous"
     ></script>
-
-    <footer>copyright: Lee kimari</footer>
   </body>
 </html>

@@ -1,50 +1,31 @@
 {% extends 'base.html' %} {% block content %}
-<body>
-  <h2>{{ book.title }}</h2>
-  <p>Author: {{ book.author }}</p>
-  <p>ISBN: {{ book.isbn }}</p>
-  <p>description: <br />{{ book.description }}</p>
-  <button
-    style="
-      border-radius: 5px;
-      background-color: lightgray;
-      padding: 5px;
-      margin: 5px;
-      width: 20%;
-    "
-  >
-    <a
-      href="{% url 'book_list' %}"
-      style="text-decoration: none; color: blue; text-align: center"
-      >Back to list
-    </a></button
-  ><br />
-  <button
-    style="
-      padding: 5px;
-      margin: 10px;
-      width: 20%;
-      border-radius: 5px;
-      color: lightgray;
-    "
-  >
-    <a href="{% url 'book_update' book.id %}" style="text-decoration: none"
-      >Update this book</a
-    >
-  </button>
+<div class="container mt-5">
+  <div class="card shadow">
+    <div class="card-body">
+      <h2 class="card-title">{{ book.title }}</h2>
+      <h5 class="card-subtitle mb-3 text-muted">by {{ book.author }}</h5>
 
-  <button
-    style="
-      padding: 5px;
-      margin: 10px;
-      width: 20%;
-      border-radius: 5px;
-      color: lightgray;
-    "
-  >
-    <a href="{% url 'book_delete' book.id %}" style="text-decoration: none"
-      >Delete this book</a
-    >
-  </button>
-</body>
+      <p><strong>ISBN:</strong> {{ book.isbn }}</p>
+
+      {% if book.description %}
+      <p><strong>Description:</strong></p>
+      <p>{{ book.description }}</p>
+      {% else %}
+      <p><em>No description provided.</em></p>
+      {% endif %}
+
+      <div class="mt-4 d-flex gap-2">
+        <a href="{% url 'book_list' %}" class="btn btn-secondary"
+          >← Back to list</a
+        >
+        <a href="{% url 'book_update' book.id %}" class="btn btn-primary"
+          >✏️ Edit</a
+        >
+        <a href="{% url 'book_delete' book.id %}" class="btn btn-danger"
+          >🗑️ Delete</a
+        >
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock content %}

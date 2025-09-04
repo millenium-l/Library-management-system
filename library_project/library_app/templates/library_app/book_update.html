@@ -1,18 +1,64 @@
 {% extends 'base.html' %} {% block content%}
-<body>
-  <h1>update a book</h1>
-  <div>
-    <form method="POST">
-      {% csrf_token %} {{ form.as_p }}
+<div class="container mt-5">
+  <h1 class="mb-4">Update This book</h1>
+  <div
+    class="mt-4 bg-light p-4 rounded shadow-sm"
+    style="background-color: grey"
+  >
+    <form method="POST" class="mb-3">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label for="id_title" class="form-label"
+          ><strong>Book name</strong>:</label
+        >
+        {{ form.title }}
+      </div>
 
-      <button type="submit">update a book</button>
+      <div class="mb-3">
+        <label for="id_author" class="form-label"
+          ><strong>Author:</strong></label
+        >
+        {{ form.author }}
+      </div>
+
+      <div class="mb-3">
+        <label for="id_title" class="form-label"><strong>ISBN:</strong></label>
+        {{ form.isbn }}
+      </div>
+
+      <div class="mb-3">
+        <label for="id_author" class="form-label"
+          ><strong>Category:</strong></label
+        >
+        {{ form.category }}
+      </div>
+
+      <div class="mb-3">
+        <label for="id_title" class="form-label"
+          ><strong>Description:</strong></label
+        >
+        {{ form.description }}
+      </div>
+
+      <div class="mb-3">
+        <label for="id_author" class="form-label"
+          ><strong>Total copies:</strong></label
+        >
+        {{ form.total_copies }}
+      </div>
+
+      <div class="mb-3">
+        <label for="id_title" class="form-label"
+          ><strong>Available copies:</strong></label
+        >
+        {{ form.available_copies }}
+      </div>
+
+      <button type="submit" class="btn btn-success">Update book</button>
+      <a href="{% url 'book_list' %}" class="btn btn-secondary ms-2"
+        >Back to List</a
+      >
     </form>
   </div>
-
-  <script
-    src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"
-    integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI"
-    crossorigin="anonymous"
-  ></script>
-</body>
+</div>
 {% endblock content %}
