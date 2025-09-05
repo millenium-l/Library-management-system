@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Book, IssuedBook
 from .forms import BookForm
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 # Create your views here.
 
@@ -18,9 +19,18 @@ def profile(request):
     return render(request, 'library_app/profile.html', {'title': title})
 
 def book_list(request):
-    books = Book.objects.all()
+    books = Book.objects.all().order_by('title')
+    paginator = Paginator(books, 4)  # Show 10 books per page
+    page = request.GET.get('page')
+
+    try:
+        paginated_books = paginator.page(page)
+    except PageNotAnInteger:
+        paginated_books = paginator.page(1)
+    except EmptyPage:
+        paginated_books = paginator.page(paginator.num_pages)
     title = "Book List"
-    return render(request, 'library_app/book_list.html', {'books': books, 'title': title})
+    return render(request, 'library_app/book_list.html', {'books': paginated_books, 'title': title})
 
 def book_detail(request, id):
     book = get_object_or_404(Book, id=id)

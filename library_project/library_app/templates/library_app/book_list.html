@@ -1,59 +1,102 @@
 {% extends 'base.html' %} {% block content %}
-<body>
-  <div class="container mt-5">
-    <h1 class="mb-4">Lits of books</h1>
-    <hr />
+<div class="container p-4 bg-light shadow rounded">
+  <h1 class="display-4 fw-bold text-center text-gradient mb-4">
+    📚 Library Catalog
+  </h1>
 
-    <a href="{% url 'book_create' %}" class="btn btn-primary mb-3"
-      >Add a book</a
-    >
+  <a href="{% url 'book_create' %}" class="btn btn-primary mb-3">Add a book</a>
 
-    <div class="table-responsive">
-      <table class="table table-bordered table-striped align-middle">
-        <thead class="table-light">
-          <tr>
-            <th>ISBN</th>
-            <th>Title</th>
-            <th>Author</th>
-            <th>category</th>
-            <th>Total Copies</th>
-            <th>Available Copies</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for book in books %}
-          <tr>
-            <td>{{ book.isbn }}</td>
-            <td>
-              <a
-                href="{% url 'book_detail' book.id %}"
-                class="text-decoration-none fw-semibold"
+  <div class="table-responsive">
+    <table class="table table-bordered table-striped align-middle">
+      <thead class="table-light">
+        <tr>
+          <th>ISBN</th>
+          <th>Title</th>
+          <th>Author</th>
+          <th>category</th>
+          <th>Total Copies</th>
+          <th>Available Copies</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for book in books %}
+        <tr>
+          <td>{{ book.isbn }}</td>
+          <td>
+            <a
+              href="{% url 'book_detail' book.id %}"
+              class="text-decoration-none fw-semibold"
+            >
+              {{ book.title }}
+            </a>
+          </td>
+          <td>{{ book.author }}</td>
+          <td>{{ book.category }}</td>
+          <td>{{ book.total_copies }}</td>
+          <td>{{ book.available_copies }}</td>
+          <td>
+            <div class="mt-4 d-flex gap-2">
+              <a href="{% url 'book_update' book.id %}" class="btn btn-primary"
+                >✏️ Edit</a
               >
-                {{ book.title }}
-              </a>
-            </td>
-            <td>{{ book.author }}</td>
-            <td>{{ book.category }}</td>
-            <td>{{ book.total_copies }}</td>
-            <td>{{ book.available_copies }}</td>
-            <td>
-              <div class="mt-4 d-flex gap-2">
-                <a
-                  href="{% url 'book_update' book.id %}"
-                  class="btn btn-primary"
-                  >✏️ Edit</a
-                >
-                <a href="{% url 'book_delete' book.id %}" class="btn btn-danger"
-                  >🗑️ Delete</a
-                >
-              </div>
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
+              <a href="{% url 'book_delete' book.id %}" class="btn btn-danger"
+                >🗑️ Delete</a
+              >
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <nav aria-label="Page navigation">
+      <ul class="pagination justify-content-center">
+        {% if books.has_previous %}
+        <li class="page-item">
+          <a class="page-link" href="?page=1">&laquo; First</a>
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?page={{ books.previous_page_number }}"
+            >Previous</a
+          >
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+          <span class="page-link">&laquo; First</span>
+        </li>
+        <li class="page-item disabled">
+          <span class="page-link">Previous</span>
+        </li>
+        {% endif %}
+
+        <li class="page-item disabled">
+          <span class="page-link">
+            Page {{ books.number }} of {{ books.paginator.num_pages }}
+          </span>
+        </li>
+
+        {% if books.has_next %}
+        <li class="page-item">
+          <a class="page-link" href="?page={{ books.next_page_number }}"
+            >Next</a
+          >
+        </li>
+        <li class="page-item">
+          <a class="page-link" href="?page={{ books.paginator.num_pages }}"
+            >&raquo; Last</a
+          >
+        </li>
+        {% else %}
+        <li class="page-item disabled">
+          <span class="page-link">Next</span>
+        </li>
+        <li class="page-item disabled">
+          <span class="page-link">&raquo; Last</span>
+        </li>
+        {% endif %}
+      </ul>
+    </nav>
   </div>
-</body>
+</div>
+
 {% endblock content %}
