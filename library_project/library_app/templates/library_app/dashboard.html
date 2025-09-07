@@ -2,9 +2,13 @@
 <div class="container">
   <header style="color: black; padding: 10px">
     {% if user.is_authenticated %}
-    <h3>Bonjour, <strong style="color: blue">{{ user.username }}!</strong></h3>
+    <div class="alert alert-primary text-center mb-3">
+      Bonjour, <strong>{{ user.username }}</strong>!
+    </div>
     {% else %}
-    <li><a href="{% url 'login' %}">login</a></li>
+    <div class="text-center">
+      <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+    </div>
     {% endif %}
   </header>
   <h1>Welcome to The Library Management Dashboard</h1>
