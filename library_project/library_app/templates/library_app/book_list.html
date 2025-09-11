@@ -35,6 +35,7 @@
           <td>{{ book.category }}</td>
           <td>{{ book.total_copies }}</td>
           <td>{{ book.available_copies }}</td>
+
           <td>
             <div class="mt-4 d-flex gap-2">
               <a href="{% url 'book_update' book.id %}" class="btn btn-primary"

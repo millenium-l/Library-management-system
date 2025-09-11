@@ -17,6 +17,7 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from django.shortcuts import redirect
+from django.conf import settings
 
 urlpatterns = [
     path('', lambda request: redirect('login', permanent=False)),  # Redirect root to login
@@ -24,3 +25,7 @@ urlpatterns = [
     path('library/', include('library_app.urls')),
     path('accounts/', include('accounts.urls')),
 ]
+
+if settings.DEBUG:
+    import debug_toolbar 
+    urlpatterns += [ path('__debug__/', include(debug_toolbar.urls)),]

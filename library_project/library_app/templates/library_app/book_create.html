@@ -54,6 +54,12 @@
         >
         {{ form.available_copies }}
       </div>
+      <div class="mb-3">
+        <label for="id_author" class="form-label"
+          ><strong>Publesher:</strong></label
+        >
+        {{ form.publisher }}
+      </div>
 
       <button type="submit" class="btn btn-success">Add book</button>
       <a href="{% url 'book_list' %}" class="btn btn-secondary ms-2"

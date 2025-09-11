@@ -40,9 +40,11 @@ def book_detail(request, id):
     title = "Book Detail"
     return render(request, 'library_app/book_detail.html', {'book': book, 'title': title})
 
+
 def issued_books(request):
     title = "Issued Books"
     return render(request, 'library_app/issued_books.html', {'title': title})
+
 
 
 def book_create(request):

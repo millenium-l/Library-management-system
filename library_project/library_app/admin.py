@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Profile, Book, IssuedBook
+from .models import Profile, Book, IssuedBook, Publisher
 # Register your models here.
 
 @admin.register(Profile)
@@ -10,9 +10,14 @@ class ProfileAdmin(admin.ModelAdmin):
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
-    list_display = ('title', 'author', 'isbn', 'category', 'description', 'total_copies', 'available_copies')
-    search_fields = ('title', 'author', 'isbn')
+    list_display = ('title', 'author', 'isbn', 'category', 'description', 'total_copies', 'available_copies', 'publisher', 'added_by')
+    search_fields = ('title', 'author', 'isbn' )
     list_filter = ('category',)
+
+@admin.register(Publisher)
+class PublisherAdmin(admin.ModelAdmin):
+    list_display = ('name', 'email')
+    search_fields = ('name', 'email')
 
 @admin.register(IssuedBook)
 class IssuedBookAdmin(admin.ModelAdmin):

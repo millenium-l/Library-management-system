@@ -4,7 +4,8 @@ from .models import Book
 class BookForm(forms.ModelForm):
     class Meta:
         model= Book
-        fields = ['title', 'author', 'isbn', 'category', 'description', 'total_copies', 'available_copies']
+        fields = ['title', 'author', 'isbn', 'category', 'description', 'total_copies', 
+                  'available_copies', 'publisher']
         widgets = {
             'title': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter book title'}),
             'author': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter author name'}),
@@ -13,4 +14,6 @@ class BookForm(forms.ModelForm):
             'description': forms.Textarea(attrs={'class': 'form-control', 'rows': 3}),
             'total_copies': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter total copies'}),
             'available_copies': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter available copies'}),
+            'publisher': forms.Select(attrs={'class': 'form-control'}),
+            'added_by': forms.Select(attrs={'class': 'form-control'}),
         }

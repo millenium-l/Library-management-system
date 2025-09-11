@@ -23,6 +23,10 @@ class Book(models.Model):
     description = models.TextField(blank=True)  # NEW field
     total_copies = models.PositiveIntegerField()
     available_copies = models.PositiveIntegerField()
+    added_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)  # NEW field
+    publisher = models.ForeignKey('Publisher', on_delete=models.SET_NULL, null=True, blank=True)  # NEW field
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     def __str__(self):
         return f"{self.title} - {self.author}"
@@ -44,5 +48,12 @@ class IssuedBook(models.Model):
 
     def __str__(self):
         return f"{self.book.title} issued to {self.user.username}"
+    
+class Publisher(models.Model):
+    name = models.CharField(max_length=255)
+    email = models.EmailField()
+
+    def __str__(self):
+        return self.name
 
 
