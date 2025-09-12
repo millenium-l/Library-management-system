@@ -12,7 +12,7 @@ class ProfileAdmin(admin.ModelAdmin):
 class BookAdmin(admin.ModelAdmin):
     list_display = ('title', 'author', 'isbn', 'category', 'description', 'total_copies', 'available_copies', 'publisher', 'added_by')
     search_fields = ('title', 'author', 'isbn' )
-    list_filter = ('category',)
+    list_filter = ('title', 'category',)
 
 @admin.register(Publisher)
 class PublisherAdmin(admin.ModelAdmin):
@@ -29,3 +29,8 @@ class IssuedBookAdmin(admin.ModelAdmin):
         return obj.is_overdue()
     is_overdue_display.boolean = True
     is_overdue_display.short_description = 'Overdue?'
+
+
+#custom admin site header and title
+admin.site.site_header = "Library Management Admin"
+admin.site.site_title = "Library Management Admin Portal"
