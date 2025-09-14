@@ -4,7 +4,7 @@ from .models import Profile, Book, IssuedBook, Publisher
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'role')
+    list_display = ('user', 'role', 'gender')
     search_fields = ('user__username', 'role')
     list_filter = ('role',)
 

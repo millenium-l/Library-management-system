@@ -2,11 +2,24 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 
+GENDER_CHOICES = [
+    ('M', 'Male'),
+    ('F', 'Female'),
+    ('U', 'Unknown'),
+]
+
+
 class CustomUserCreationForm(UserCreationForm):
     email = forms.EmailField(required=True, widget=forms.EmailInput(attrs={
         "class": "form-control",
         "placeholder": "Enter your email"
     }))
+
+    gender = forms.ChoiceField(
+        choices=GENDER_CHOICES,
+        widget=forms.Select(attrs={"class": "form-select"}),
+        required=True
+    )
 
     password1 = forms.CharField(
         strip=False,

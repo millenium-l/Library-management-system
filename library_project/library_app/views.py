@@ -15,9 +15,15 @@ def dashboard(request):
     }
     return render(request, 'library_app/dashboard.html', context)
 
+@login_required
 def profile(request):
     title = "Profile"
-    return render(request, 'library_app/profile.html', {'title': title})
+    profile = request.user.profile # access the profile linked to the user
+    context = {
+        'title': title,
+        'profile': profile,
+    }
+    return render(request, 'library_app/profile.html', context, )
 
 @login_required
 def book_list(request):

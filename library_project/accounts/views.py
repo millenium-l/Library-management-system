@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 #from django.contrib.auth.forms import  AuthenticationForm
 from .forms import CustomUserCreationForm, CustomAuthenticationForm
 from django.contrib.auth import login, logout
+from library_app.models import Profile
 
 # Create your views here.
 
@@ -11,6 +12,10 @@ def user_register(request):
         form = CustomUserCreationForm(request.POST)
         if form.is_valid():
             user = form.save()
+            # creating a gender role
+            gender = form.cleaned_data('gender')
+            Profile.objects.create(user=user, gender=gender)  # create Profile here
+
             login(request, user)
             return redirect('dashboard')  # redirect to homepage or dashboard
     else:

@@ -9,8 +9,14 @@ class Profile(models.Model):
         ('student', 'Student'),
         ('librarian', 'Librarian'),
     )
+    GENDER_CHOICES = (
+        ('Male', 'Male' ),
+        ('Female', 'Female'),
+        ('Unknown', 'Unknown'),
+    )
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     role = models.CharField(max_length=10, choices=USER_ROLES, default='student')
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, default='Unknown')
 
     def __str__(self):
         return f"{self.user.username if self.user else 'Unknown User'} - {self.role}"
