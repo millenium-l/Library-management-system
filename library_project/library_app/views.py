@@ -4,6 +4,7 @@ from .forms import BookForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from datetime import datetime
 # Create your views here.
 
 
@@ -12,6 +13,7 @@ def dashboard(request):
     context = {
         'title': title,
         'total_books': Book.objects.count(),
+        'current_year': datetime.now().year,
     }
     return render(request, 'library_app/dashboard.html', context)
 
