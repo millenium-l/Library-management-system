@@ -24,6 +24,7 @@ def profile(request):
     context = {
         'title': title,
         'profile': profile,
+        'current_year': datetime.now().year,
     }
     return render(request, 'library_app/profile.html', context, )
 
@@ -40,7 +41,7 @@ def book_list(request):
     except EmptyPage:
         paginated_books = paginator.page(paginator.num_pages)
     title = "Book List"
-    return render(request, 'library_app/book_list.html', {'books': paginated_books, 'title': title})
+    return render(request, 'library_app/book_list.html', {'books': paginated_books, 'title': title, 'current_year': datetime.now().year,})
 
 """
 class based boook_list
@@ -57,7 +58,12 @@ class BookListView(ListView):
 def book_detail(request, id):
     book = get_object_or_404(Book, id=id)
     title = "Book Detail"
-    return render(request, 'library_app/book_detail.html', {'book': book, 'title': title})
+    context = {
+        'book': book,
+        'title': title,
+        'current_year': datetime.now().year,
+    }
+    return render(request, 'library_app/book_detail.html', context)
 
 
 def issued_books(request):
@@ -79,8 +85,13 @@ def book_create(request):
         form = BookForm()
         
     title = "Add New Book"
+    context = {
+        'form': form,
+        'title': title,
+        'current_year': datetime.now().year,
+    }
 
-    return render(request, 'library_app/book_create.html', {'form': form, 'title': title})
+    return render(request, 'library_app/book_create.html', context)
 
 @login_required
 def book_update(request, id): 
@@ -97,7 +108,12 @@ def book_update(request, id):
         form = BookForm(instance=book)
 
     title = "Update Book"
-    return render(request, 'library_app/book_update.html', {'form': form, 'title': title})
+    context = {
+        'form': form,
+        'title': title,
+        'current_year': datetime.now().year,
+    }
+    return render(request, 'library_app/book_update.html', context)
 
 @login_required
 def book_delete(request, id):  
@@ -111,5 +127,11 @@ def book_delete(request, id):
         return redirect('book_list')
     
     title = "Delete Book"
+
+    context = {
+        'book': book,
+        'title': title,
+        'current_year': datetime.now().year,
+    }
     
-    return render(request, 'library_app/book_delete.html', {'book': book, 'title': title})
+    return render(request, 'library_app/book_delete.html', context)
