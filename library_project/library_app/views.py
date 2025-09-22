@@ -30,7 +30,11 @@ def profile(request):
 
 @login_required
 def book_list(request):
+    query = request.GET.get('q')
     books = Book.objects.all().order_by('title')
+    if query:
+        books = books.filter(title__icontains=query)
+
     paginator = Paginator(books, 4)  # Show 4 books per page
     page = request.GET.get('page')
 
@@ -41,7 +45,7 @@ def book_list(request):
     except EmptyPage:
         paginated_books = paginator.page(paginator.num_pages)
     title = "Book List"
-    return render(request, 'library_app/book_list.html', {'books': paginated_books, 'title': title, 'current_year': datetime.now().year,})
+    return render(request, 'library_app/book_list.html', {'books': paginated_books, 'title': title, 'current_year': datetime.now().year, 'query': query})
 
 """
 class based boook_list
@@ -78,7 +82,9 @@ def book_create(request):
     if request.method == 'POST':
         form = BookForm(request.POST)
         if form.is_valid():
-            form.save()
+            book = form.save(commit=False)
+            book.added_by = request.user
+            book.save()
             messages.success(request, 'Book added successfully!')
             return redirect('book_list')
     else:

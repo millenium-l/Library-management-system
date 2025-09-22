@@ -14,6 +14,16 @@
     ></button>
   </div>
   {% endif %}
+  <form method="get">
+    <input
+      type="text"
+      name="q"
+      placeholder="Search books..."
+      value="{{ query }}"
+    />
+    <button type="submit">Search</button>
+  </form>
+
   <h1 class="display-4 fw-bold text-center text-gradient mb-4">
     📚 Library Catalog
   </h1>
