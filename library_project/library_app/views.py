@@ -5,6 +5,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from datetime import datetime
+from django.db.models import Q
 # Create your views here.
 
 
@@ -30,11 +31,15 @@ def profile(request):
 
 @login_required
 def book_list(request):
-    query = request.GET.get('q')
+    query = request.GET.get('q', '')
     books = Book.objects.all().order_by('title')
     if query:
-        books = books.filter(title__icontains=query)
-
+        books = books.filter(
+            Q(title__icontains=query) |
+            Q(author__icontains=query) |
+            Q(isbn__icontains=query)
+        )
+    
     paginator = Paginator(books, 4)  # Show 4 books per page
     page = request.GET.get('page')
 

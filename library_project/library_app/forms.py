@@ -1,5 +1,5 @@
 from django import forms
-from .models import Book
+from .models import Book, IssuedBook
 
 class BookForm(forms.ModelForm):
     class Meta:
@@ -16,4 +16,12 @@ class BookForm(forms.ModelForm):
             'available_copies': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter available copies'}),
             'publisher': forms.Select(attrs={'class': 'form-control'}),
             'added_by': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+class IssueBookForm(forms.ModelForm):
+    class Meta:
+        model = IssuedBook
+        fields = ['user', 'book', 'due_date']
+        widgets = {
+            'due_date': forms.DateInput(attrs={'type': 'date'}),
         }
