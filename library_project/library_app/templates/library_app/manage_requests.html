@@ -1,23 +1,117 @@
 {% extends 'base.html' %} {% block content %}
 
 <h2 class="mb-3">Pending Book Requests</h2>
-{% if pending_requests %} {% include 'partials/request_table.html' with
-requests=pending_requests status='pending' %} {% else %}
+{% if pending_requests %}
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>User</th>
+      <th>Book</th>
+      <th>Request Date</th>
+      <th>Status</th>
+      <th>Approved By</th>
+      <th>Actions</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for req in pending_requests %}
+    <tr>
+      <td>{{ req.user.username }}</td>
+      <td>{{ req.book.title }}</td>
+      <td>{{ req.request_date|date:"M d, Y H:i" }}</td>
+      <td><span class="badge bg-warning">{{ req.status }}</span></td>
+      <td>
+        <span
+          >{% if req.approved_by %} {{ req.approved_by.username }} {% else %} -
+          {% endif %}</span
+        >
+      </td>
+      <td>
+        <a
+          href="{% url 'approve_request' req.id %}"
+          class="btn btn-success btn-sm"
+          >Approve</a
+        >
+        <a
+          href="{% url 'reject_request' req.id %}"
+          class="btn btn-danger btn-sm"
+          >Reject</a
+        >
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
 <p>No pending requests.</p>
 {% endif %}
 
 <hr />
 
 <h2 class="mb-3">Approved Book Requests</h2>
-{% if approved_requests %} {% include 'partials/request_table.html' with
-requests=approved_requests status='approved' %} {% else %}
+{% if approved_requests %}
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>User</th>
+      <th>Book</th>
+      <th>Request Date</th>
+      <th>Status</th>
+      <th>Approved By</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for req in approved_requests %}
+    <tr>
+      <td>{{ req.user.username }}</td>
+      <td>{{ req.book.title }}</td>
+      <td>{{ req.request_date|date:"M d, Y H:i" }}</td>
+      <td><span class="badge bg-success">{{ req.status }}</span></td>
+      <td>
+        <span
+          >{% if req.approved_by %} {{ req.approved_by.username }} {% else %} -
+          {% endif %}</span
+        >
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
 <p>No approved requests.</p>
 {% endif %}
 
 <hr />
 
 <h2 class="mb-3">Rejected Book Requests</h2>
-{% if rejected_requests %} {% include 'partials/request_table.html' with
-requests=rejected_requests status='rejected' %} {% else %}
+{% if rejected_requests %}
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>User</th>
+      <th>Book</th>
+      <th>Request Date</th>
+      <th>Status</th>
+      <th>Approved By</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for req in rejected_requests %}
+    <tr>
+      <td>{{ req.user.username }}</td>
+      <td>{{ req.book.title }}</td>
+      <td>{{ req.request_date|date:"M d, Y H:i" }}</td>
+      <td><span class="badge bg-danger">{{ req.status }}</span></td>
+      <td>
+        <span
+          >{% if req.approved_by %} {{ req.approved_by.username }} {% else %} -
+          {% endif %}</span
+        >
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
 <p>No rejected requests.</p>
 {% endif %} {% endblock %}

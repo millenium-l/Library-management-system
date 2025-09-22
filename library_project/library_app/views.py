@@ -6,15 +6,28 @@ from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from datetime import datetime
 from django.utils import timezone
-from django.db.models import Q
+from django.db.models import Q, Count
 # Create your views here.
 
 
+
 def dashboard(request):
-    title = "Dashboard"
+    total_books = Book.objects.count()
+    borrowed_books = IssuedBook.objects.filter(return_date__isnull=True).count()
+    recent_books = Book.objects.order_by('-created_at')[:5]
+
+    # Optional: Most popular books (by borrow count)
+    popular_books = (
+        Book.objects.annotate(borrow_count=Count('issuedbook'))
+        .order_by('-borrow_count')[:5]
+    )
+
     context = {
-        'title': title,
-        'total_books': Book.objects.count(),
+        'title': "Dashboard",
+        'total_books': total_books,
+        'borrowed_books': borrowed_books,
+        'recent_books': recent_books,
+        'popular_books': popular_books,
         'current_year': datetime.now().year,
     }
     return render(request, 'library_app/dashboard.html', context)
