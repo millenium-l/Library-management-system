@@ -1,0 +1,11 @@
+<!-- return_book.html -->
+{% extends 'base.html' %} {% block content %}
+<h2>Return Book</h2>
+<p>
+  Are you sure you want to return <strong>{{ issued_book.book.title }}</strong>?
+</p>
+<form method="POST">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-success">Return</button>
+</form>
+{% endblock %}

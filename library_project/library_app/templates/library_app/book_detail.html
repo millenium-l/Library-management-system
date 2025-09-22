@@ -21,6 +21,12 @@
         <a href="{% url 'book_update' book.id %}" class="btn btn-primary"
           >✏️ Edit</a
         >
+        <a href="{% url 'issued_book' %}" class="btn btn-primary"
+          >✏️ Borrow Book</a
+        >
+        <a href="{% url 'return_book' book.id %}" class="btn btn-primary"
+          >✏️ Return Book</a
+        >
         <a href="{% url 'book_delete' book.id %}" class="btn btn-danger"
           >🗑️ Delete</a
         >

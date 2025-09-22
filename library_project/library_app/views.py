@@ -1,10 +1,11 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from .models import Book, IssuedBook
-from .forms import BookForm
+from .forms import BookForm, IssuedBookForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from datetime import datetime
+from django.utils import timezone
 from django.db.models import Q
 # Create your views here.
 
@@ -75,9 +76,48 @@ def book_detail(request, id):
     return render(request, 'library_app/book_detail.html', context)
 
 
-def issued_books(request):
-    title = "Issued Books"
-    return render(request, 'library_app/issued_books.html', {'title': title})
+@login_required
+def book_issue(request):
+    if not request.user.is_staff:  # Only librarian can issue books
+        messages.error(request, "You are not authorized to issue books.")
+        return redirect('book_list')
+
+    if request.method == 'POST':
+        form = IssuedBookForm(request.POST)
+        if form.is_valid():
+            issued_book = form.save(commit=False)
+
+            # Check if book is available
+            if issued_book.book.available_copies < 1:
+                messages.error(request, "No available copies for this book.")
+            else:
+                issued_book.save()
+                # Reduce available copies count
+                issued_book.book.available_copies -= 1
+                issued_book.book.save()
+                messages.success(request, "Book issued successfully.")
+                return redirect('dashboard')
+    else:
+        form = IssuedBookForm()
+
+    return render(request, 'library_app/issued_book.html', {'form': form})
+
+
+@login_required
+def return_book(request, issued_book_id):
+    issued_book = get_object_or_404(IssuedBook, id=issued_book_id)
+    if request.method == 'POST':
+        issued_book.return_date = timezone.now().date()
+        issued_book.save()
+        # Increase available copies
+        issued_book.book.available_copies += 1
+        issued_book.book.save()
+        messages.success(request, "Book returned successfully.")
+        return redirect('dashboard')
+
+    return render(request, 'library_app/return_book.html', {'issued_book': issued_book})
+
+
 
 @login_required
 def book_create(request): 

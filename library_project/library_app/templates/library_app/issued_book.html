@@ -1,0 +1,8 @@
+<!-- issue_book.html -->
+{% extends 'base.html' %} {% block content %}
+<h2>Issue Book</h2>
+<form method="POST">
+  {% csrf_token %} {{ form.as_p }}
+  <button type="submit" class="btn btn-primary">Issue</button>
+</form>
+{% endblock %}
