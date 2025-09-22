@@ -1,0 +1,9 @@
+{% extends 'base.html' %} {% block content %}
+<h2>Request Book</h2>
+<p>Are you sure you want to request <strong>{{ book.title }}</strong>?</p>
+<form method="post">
+  {% csrf_token %}
+  <button type="submit" class="btn btn-primary">Confirm Request</button>
+  <a href="{% url 'book_list'%}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

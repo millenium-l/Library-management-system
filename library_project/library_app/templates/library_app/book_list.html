@@ -29,7 +29,9 @@
     📚 Library Catalog
   </h1>
 
+  {% if user.is_staff %}
   <a href="{% url 'book_create' %}" class="btn btn-primary mb-3">Add a book</a>
+  {% endif %}
 
   <div class="table-responsive">
     <table class="table table-bordered table-striped align-middle">
@@ -41,7 +43,9 @@
           <th>category</th>
           <th>Total Copies</th>
           <th>Available Copies</th>
+          {% if user.is_staff %}
           <th>Action</th>
+          {% endif %}
         </tr>
       </thead>
       <tbody>
@@ -60,7 +64,7 @@
           <td>{{ book.category }}</td>
           <td>{{ book.total_copies }}</td>
           <td>{{ book.available_copies }}</td>
-
+          {% if user.is_staff %}
           <td>
             <div class="mt-4 d-flex gap-2">
               <a href="{% url 'book_update' book.id %}" class="btn btn-primary"
@@ -71,6 +75,7 @@
               >
             </div>
           </td>
+          {% else %} {% endif %}
         </tr>
         {% endfor %}
       </tbody>

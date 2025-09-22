@@ -1,5 +1,5 @@
 from django import forms
-from .models import Book, IssuedBook
+from .models import Book, IssuedBook, BookRequest
 
 class BookForm(forms.ModelForm):
     class Meta:
@@ -25,3 +25,10 @@ class IssuedBookForm(forms.ModelForm):
         widgets = {
             'due_date': forms.DateInput(attrs={'type': 'date'}),
         }
+
+
+
+class BookRequestForm(forms.ModelForm):
+    class Meta:
+        model = BookRequest
+        fields = []  # no input fields needed since book & user are set automatically

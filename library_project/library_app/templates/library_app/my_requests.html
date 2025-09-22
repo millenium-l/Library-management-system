@@ -1,0 +1,40 @@
+{% extends 'base.html' %} {% block content %}
+<h2>My Book Requests</h2>
+
+{% if requests %}
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>Book</th>
+      <th>Status</th>
+      <th>Request Date</th>
+      <th>Approved By</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for req in requests %}
+    <tr>
+      <td>{{ req.book.title }}</td>
+      <td>
+        {% if req.status == 'pending' %}
+        <span class="badge bg-warning">{{ req.status|title }}</span>
+        {% elif req.status == 'approved' %}
+        <span class="badge bg-success">{{ req.status|title }}</span>
+        {% else %}
+        <span class="badge bg-danger">{{ req.status|title }}</span>
+        {% endif %}
+      </td>
+      <td>{{ req.request_date|date:"M d, Y H:i" }}</td>
+      <td>
+        <span
+          >{% if req.approved_by %} {{ req.approved_by.username }} {% else %} -
+          {% endif %}</span
+        >
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>You have not requested any books yet.</p>
+{% endif %} {% endblock %}

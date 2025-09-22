@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from .models import Book, IssuedBook
+from .models import Book, IssuedBook, BookRequest
 from .forms import BookForm, IssuedBookForm
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
@@ -77,49 +77,6 @@ def book_detail(request, id):
 
 
 @login_required
-def book_issue(request):
-    if not request.user.is_staff:  # Only librarian can issue books
-        messages.error(request, "You are not authorized to issue books.")
-        return redirect('book_list')
-
-    if request.method == 'POST':
-        form = IssuedBookForm(request.POST)
-        if form.is_valid():
-            issued_book = form.save(commit=False)
-
-            # Check if book is available
-            if issued_book.book.available_copies < 1:
-                messages.error(request, "No available copies for this book.")
-            else:
-                issued_book.save()
-                # Reduce available copies count
-                issued_book.book.available_copies -= 1
-                issued_book.book.save()
-                messages.success(request, "Book issued successfully.")
-                return redirect('dashboard')
-    else:
-        form = IssuedBookForm()
-
-    return render(request, 'library_app/issued_book.html', {'form': form})
-
-
-@login_required
-def return_book(request, issued_book_id):
-    issued_book = get_object_or_404(IssuedBook, id=issued_book_id)
-    if request.method == 'POST':
-        issued_book.return_date = timezone.now().date()
-        issued_book.save()
-        # Increase available copies
-        issued_book.book.available_copies += 1
-        issued_book.book.save()
-        messages.success(request, "Book returned successfully.")
-        return redirect('dashboard')
-
-    return render(request, 'library_app/return_book.html', {'issued_book': issued_book})
-
-
-
-@login_required
 def book_create(request): 
     if not request.user.is_staff: 
         messages.error(request, "You are not authorized to add books.")
@@ -186,3 +143,139 @@ def book_delete(request, id):
     }
     
     return render(request, 'library_app/book_delete.html', context)
+
+
+
+
+
+
+
+@login_required
+def book_issue(request):
+    if not request.user.is_staff:  # Only librarian can issue books
+        messages.error(request, "You are not authorized to issue books.")
+        return redirect('book_list')
+
+    if request.method == 'POST':
+        form = IssuedBookForm(request.POST)
+        if form.is_valid():
+            issued_book = form.save(commit=False)
+
+            # Check if book is available
+            if issued_book.book.available_copies < 1:
+                messages.error(request, "No available copies for this book.")
+            else:
+                issued_book.save()
+                # Reduce available copies count
+                issued_book.book.available_copies -= 1
+                issued_book.book.save()
+                messages.success(request, "Book issued successfully.")
+                return redirect('dashboard')
+    else:
+        form = IssuedBookForm()
+
+    return render(request, 'library_app/issued_book.html', {'form': form})
+
+
+@login_required
+def request_book(request, book_id):
+    book = get_object_or_404(Book, id=book_id)
+
+    # Check if user already requested this book and it's pending or approved
+    existing_request = BookRequest.objects.filter(
+        user=request.user,
+        book=book,
+        status__in=['pending', 'approved']
+    ).exists()
+
+    if existing_request:
+        messages.info(request, "You already have a pending or approved request for this book.")
+        return redirect('book_list')
+
+    if request.method == 'POST':
+        # Create a new BookRequest
+        BookRequest.objects.create(user=request.user, book=book)
+        messages.success(request, f"Your request for '{book.title}' has been sent.")
+        return redirect('book_list')
+
+    # Show confirmation page (optional)
+    return render(request, 'library_app/request_book.html', {'book': book})
+
+
+@login_required
+def return_book(request, issued_book_id):
+    issued_book = get_object_or_404(IssuedBook, id=issued_book_id)
+    if request.method == 'POST':
+        issued_book.return_date = timezone.now().date()
+        issued_book.save()
+        # Increase available copies
+        issued_book.book.available_copies += 1
+        issued_book.book.save()
+        messages.success(request, "Book returned successfully.")
+        return redirect('dashboard')
+
+    return render(request, 'library_app/return_book.html', {'issued_book': issued_book})
+
+
+
+from django.contrib.admin.views.decorators import staff_member_required
+@staff_member_required
+@login_required
+def manage_requests(request):
+    pending_requests = BookRequest.objects.filter(status='pending').order_by('-request_date')
+    approved_requests = BookRequest.objects.filter(status='approved').order_by('-request_date')
+    rejected_requests = BookRequest.objects.filter(status='rejected').order_by('-request_date')
+
+    context = {
+        'title': 'Manage Book Requests',
+        'pending_requests': pending_requests,
+        'approved_requests': approved_requests,
+        'rejected_requests': rejected_requests,
+    }
+    return render(request, 'library_app/manage_requests.html', context)
+
+
+
+@staff_member_required
+def approve_request(request, request_id):
+    book_request = get_object_or_404(BookRequest, id=request_id)
+
+    if book_request.book.available_copies < 1:
+        messages.error(request, "No available copies to approve the request.")
+        return redirect('manage_requests')
+
+    # Mark request approved
+    book_request.status = 'approved'
+    book_request.approved_by = request.user
+    book_request.save()
+
+    # Create IssuedBook entry
+    IssuedBook.objects.create(
+        user=book_request.user,
+        book=book_request.book,
+        due_date=timezone.now().date() + timezone.timedelta(days=14)
+    )
+
+    # Reduce available copies
+    book_request.book.available_copies -= 1
+    book_request.book.save()
+
+    messages.success(request, f"Book '{book_request.book.title}' issued to {book_request.user.username}.")
+    return redirect('manage_requests')
+
+
+@staff_member_required
+def reject_request(request, request_id):
+    book_request = get_object_or_404(BookRequest, id=request_id)
+    book_request.status = 'rejected'
+    book_request.approved_by = request.user
+    book_request.save()
+
+    messages.info(request, f"Request for '{book_request.book.title}' rejected.")
+    return redirect('manage_requests')
+
+
+@login_required
+def my_requests(request):
+    requests = BookRequest.objects.filter(user=request.user).order_by('-request_date')
+    return render(request, 'library_app/my_requests.html', {'requests': requests})

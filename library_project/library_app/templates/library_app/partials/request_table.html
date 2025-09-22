@@ -1,0 +1,45 @@
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>User</th>
+      <th>Book</th>
+      <th>Request Date</th>
+      <th>Status</th>
+      <th>Approved By</th>
+      {% if status == 'pending' %}
+      <th>Actions</th>
+      {% endif %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for req in requests %}
+    <tr>
+      <td>{{ req.user.username }}</td>
+      <td>{{ req.book.title }}</td>
+      <td>{{ req.request_date|date:"M d, Y H:i" }}</td>
+      <td>
+        <span
+          class="badge {% if status == 'approved' %}bg-success {% elif status == 'rejected' %}bg-danger {% else %}bg-warning {% endif %}"
+        >
+          {{ req.status }}
+        </span>
+      </td>
+      <td>{{ req.approved_by.username if req.approved_by else "-" }}</td>
+      {% if status == 'pending' %}
+      <td>
+        <a
+          href="{% url 'approve_request' req.id %}"
+          class="btn btn-success btn-sm"
+          >Approve</a
+        >
+        <a
+          href="{% url 'reject_request' req.id %}"
+          class="btn btn-danger btn-sm"
+          >Reject</a
+        >
+      </td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
