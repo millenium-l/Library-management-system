@@ -1,4 +1,16 @@
 {% extends 'base.html' %} {% block content %}
+
+<style>
+  .btn-simple {
+    border-radius: 0.375rem; /* Slightly rounded */
+    transition: background-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .btn-simple:hover {
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  }
+</style>
+
 <div class="container mt-5">
   <div class="card shadow">
     <div class="card-body">
@@ -14,30 +26,41 @@
       <p><em>No description provided.</em></p>
       {% endif %}
 
-      <div class="mt-4 d-flex gap-2">
-        <a href="{% url 'book_list' %}" class="btn btn-secondary"
-          >← Back to list</a
-        >
+      <div class="mt-4 d-flex gap-2 flex-wrap">
+        <a href="{% url 'book_list' %}" class="btn btn-secondary btn-simple">
+          ← Back to list
+        </a>
 
         {% if user.is_authenticated %}
-        <a href="{% url 'request_book' book.id %}" class="btn btn-primary"
-          >Request Book</a
+        <a
+          href="{% url 'request_book' book.id %}"
+          class="btn btn-success btn-simple"
         >
+          Request Book
+        </a>
+
+        <a
+          href="{% url 'return_book' book.id %}"
+          class="btn btn-primary btn-simple"
+        >
+          ✏️ Return Book
+        </a>
         {% else %}
         <p><a href="{% url 'login' %}">Log in</a> to request books.</p>
-        {% endif %}
+        {% endif %} {% if user.is_staff %}
+        <a
+          href="{% url 'book_update' book.id %}"
+          class="btn btn-info btn-simple"
+        >
+          ✏️ Edit
+        </a>
 
-        <a href="{% url 'return_book' book.id %}" class="btn btn-primary"
-          >✏️ Return Book</a
+        <a
+          href="{% url 'book_delete' book.id %}"
+          class="btn btn-danger btn-simple"
         >
-        {% if user.is_staff %}
-        <a href="{% url 'book_update' book.id %}" class="btn btn-primary"
-          >✏️ Edit</a
-        >
-
-        <a href="{% url 'book_delete' book.id %}" class="btn btn-danger"
-          >🗑️ Delete</a
-        >
+          🗑️ Delete
+        </a>
         {% endif %}
       </div>
     </div>
