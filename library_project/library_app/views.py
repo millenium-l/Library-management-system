@@ -17,6 +17,7 @@ def dashboard(request):
     recent_books = Book.objects.order_by('-created_at')[:5]
 
     # Optional: Most popular books (by borrow count)
+    #annotate to count related issuedbook entries
     popular_books = (
         Book.objects.annotate(borrow_count=Count('issuedbook'))
         .order_by('-borrow_count')[:5]
@@ -28,24 +29,28 @@ def dashboard(request):
         'borrowed_books': borrowed_books,
         'recent_books': recent_books,
         'popular_books': popular_books,
-        'current_year': datetime.now().year,
+        'current_year': timezone.now().year,
     }
     return render(request, 'library_app/dashboard.html', context)
 
 @login_required
 def profile(request):
-    title = "Profile"
     profile = request.user.profile # access the profile linked to the user
     context = {
-        'title': title,
+        'title': profile,
         'profile': profile,
-        'current_year': datetime.now().year,
+        'current_year': timezone.now().year,
     }
     return render(request, 'library_app/profile.html', context, )
 
+"""
+use of q object allowing complex queries with OR conditions
+
+"""
+
 @login_required
 def book_list(request):
-    query = request.GET.get('q', '')
+    query = request.GET.get('q', '')# reads the search query from the URL parameters
     books = Book.objects.all().order_by('title')
     if query:
         books = books.filter(
@@ -55,18 +60,22 @@ def book_list(request):
         )
     
     paginator = Paginator(books, 4)  # Show 4 books per page
-    page = request.GET.get('page')
+    page_number = request.GET.get('page') # get the page number from the URL parameters
+    books_page = paginator.get_page(page_number) # get the books for the current page
 
-    try:
-        paginated_books = paginator.page(page)
-    except PageNotAnInteger:
-        paginated_books = paginator.page(1)
-    except EmptyPage:
-        paginated_books = paginator.page(paginator.num_pages)
-    title = "Book List"
-    return render(request, 'library_app/book_list.html', {'books': paginated_books, 'title': title, 'current_year': datetime.now().year, 'query': query})
+    context = {
+        'title': "Book List",
+        'books': books_page,
+        'query': query,
+        'current_year': timezone.now().year,
+    }
+
+    
+    
+    return render(request, 'library_app/book_list.html', context)
 
 """
+
 class based boook_list
 from django.views.generic import ListView
 class BookListView(ListView):
@@ -76,18 +85,24 @@ class BookListView(ListView):
     paginate_by = 4  # This will paginate the list, showing 4 books per page
 
 """
-
 @login_required
 def book_detail(request, id):
     book = get_object_or_404(Book, id=id)
-    title = "Book Detail"
+    
+    # Check if the logged-in user currently has this book issued and not returned
+    issued_book = IssuedBook.objects.filter(
+        user=request.user,
+        book=book,
+        return_date__isnull=True
+    ).first()
+
     context = {
         'book': book,
-        'title': title,
-        'current_year': datetime.now().year,
+        'issued_book': issued_book,
+        'title': "Book Detail",
+        'current_year': timezone.now().year,
     }
     return render(request, 'library_app/book_detail.html', context)
-
 
 @login_required
 def book_create(request): 
@@ -95,9 +110,9 @@ def book_create(request):
         messages.error(request, "You are not authorized to add books.")
         return redirect('book_list')
     if request.method == 'POST':
-        form = BookForm(request.POST)
+        form = BookForm(request.POST)# holds the submitted data
         if form.is_valid():
-            book = form.save(commit=False)
+            book = form.save(commit=False)# commit false to modify(added_by) before saving
             book.added_by = request.user
             book.save()
             messages.success(request, 'Book added successfully!')
@@ -121,7 +136,7 @@ def book_update(request, id):
         return redirect('book_list')
     book = get_object_or_404(Book, id=id)
     if request.method == 'POST':
-        form = BookForm(request.POST, instance=book)
+        form = BookForm(request.POST, instance=book)# instance to update existing book 
         if form.is_valid():
             form.save()
             return redirect('book_list')
@@ -141,7 +156,8 @@ def book_delete(request, id):
     if not request.user.is_staff: 
         messages.error(request, "You are not authorized to delete books.")
         return redirect('book_list')
-    book = get_object_or_404(Book, id=id)
+    book = get_object_or_404(Book, id=id)#fetch the book to be deleted, and prevent errors when the book doesn’t exist, not wrong deletions.
+    # confirm deletion on POST request to avoid accidental deletions
     if request.method == 'POST':
         book.delete()
         messages.success(request, 'Book deleted successfully!')
@@ -162,10 +178,9 @@ def book_delete(request, id):
 
 
 
-
 @login_required
 def book_issue(request):
-    if not request.user.is_staff:  # Only librarian can issue books
+    if not request.user.is_staff:  # Only staff can issue books
         messages.error(request, "You are not authorized to issue books.")
         return redirect('book_list')
 
@@ -218,26 +233,40 @@ def request_book(request, book_id):
 @login_required
 def return_book(request, issued_book_id):
     issued_book = get_object_or_404(IssuedBook, id=issued_book_id)
+
     if request.method == 'POST':
         issued_book.return_date = timezone.now().date()
         issued_book.save()
+
         # Increase available copies
         issued_book.book.available_copies += 1
         issued_book.book.save()
-        messages.success(request, "Book returned successfully.")
-        return redirect('dashboard')
+
+        # Update the related book request status
+        try:
+            book_request = BookRequest.objects.get(
+                user=issued_book.user,
+                book=issued_book.book,
+                status='approved'
+            )
+            book_request.status = 'returned'
+            book_request.save()
+        except BookRequest.DoesNotExist:
+            pass  # No active request found (edge case)
+
+        messages.success(request, f"Book '{issued_book.book.title}' returned successfully.")
+        return redirect('my_requests')
 
     return render(request, 'library_app/return_book.html', {'issued_book': issued_book})
 
 
-
 from django.contrib.admin.views.decorators import staff_member_required
-@staff_member_required
 @login_required
+@staff_member_required
 def manage_requests(request):
-    pending_requests = BookRequest.objects.filter(status='pending').order_by('-request_date')
-    approved_requests = BookRequest.objects.filter(status='approved').order_by('-request_date')
-    rejected_requests = BookRequest.objects.filter(status='rejected').order_by('-request_date')
+    pending_requests = BookRequest.objects.filter(status='pending').order_by('-request_date')# waiting for approval
+    approved_requests = BookRequest.objects.filter(status='approved').order_by('-request_date')# already approved
+    rejected_requests = BookRequest.objects.filter(status='rejected').order_by('-request_date')# already rejected
 
     context = {
         'title': 'Manage Book Requests',
@@ -251,7 +280,7 @@ def manage_requests(request):
 
 @staff_member_required
 def approve_request(request, request_id):
-    book_request = get_object_or_404(BookRequest, id=request_id)
+    book_request = get_object_or_404(BookRequest, id=request_id)# fetch the specific book request
 
     if book_request.book.available_copies < 1:
         messages.error(request, "No available copies to approve the request.")
@@ -262,12 +291,13 @@ def approve_request(request, request_id):
     book_request.approved_by = request.user
     book_request.save()
 
-    # Create IssuedBook entry
+    # Create IssuedBook entry record within 14 days
     IssuedBook.objects.create(
         user=book_request.user,
         book=book_request.book,
-        due_date=timezone.now().date() + timezone.timedelta(days=14)
-    )
+        due_date=timezone.now().date() + timezone.timedelta(days=14),
+        request=book_request
+    )   
 
     # Reduce available copies
     book_request.book.available_copies -= 1
@@ -288,7 +318,21 @@ def reject_request(request, request_id):
     return redirect('manage_requests')
 
 
+from django.utils import timezone
+
 @login_required
 def my_requests(request):
     requests = BookRequest.objects.filter(user=request.user).order_by('-request_date')
-    return render(request, 'library_app/my_requests.html', {'requests': requests})
+
+    for req in requests:
+        req.issued_book = IssuedBook.objects.filter(
+            user=request.user,
+            book=req.book,
+            return_date__isnull=True
+        ).first()
+
+    context = {
+        'requests': requests,
+        'today': timezone.now().date(),  # ✅ ADD THIS LINE
+    }
+    return render(request, 'library_app/my_requests.html', context)

@@ -4,6 +4,7 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 # Create your models here.
+# extending djangos built in user model
 class Profile(models.Model):
     USER_ROLES = (
         ('student', 'Student'),
@@ -22,12 +23,14 @@ class Profile(models.Model):
         return f"{self.user.username if self.user else 'Unknown User'} - {self.role}"
 
 
+#signal to create or update profile when user is created/updated
 @receiver(post_save, sender=User)
 def create_or_update_user_profile(sender, instance, created, **kwargs):
     if created:
         Profile.objects.create(user=instance)
     else:
         instance.profile.save()
+
 
 class Book(models.Model):
     title = models.CharField(max_length=255)
@@ -48,9 +51,11 @@ class Book(models.Model):
 
 from django.utils import timezone
 
+# work in progress
 class IssuedBook(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)
+    request = models.OneToOneField('BookRequest', on_delete=models.SET_NULL, null=True, blank=True)
     issue_date = models.DateField(default=timezone.now)
     due_date = models.DateField()
     return_date = models.DateField(null=True, blank=True)
@@ -63,6 +68,7 @@ class IssuedBook(models.Model):
     def __str__(self):
         return f"{self.book.title} issued to {self.user.username}"
     
+
 class Publisher(models.Model):
     name = models.CharField(max_length=255)
     email = models.EmailField()
@@ -75,6 +81,7 @@ class BookRequest(models.Model):
         ('pending', 'Pending'),
         ('approved', 'Approved'),
         ('rejected', 'Rejected'),
+        ('returned', 'Returned'),
     )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     book = models.ForeignKey(Book, on_delete=models.CASCADE)

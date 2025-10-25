@@ -18,6 +18,7 @@ class BookForm(forms.ModelForm):
             'added_by': forms.Select(attrs={'class': 'form-control'}),
         }
 
+# work in progress
 class IssuedBookForm(forms.ModelForm):
     class Meta:
         model = IssuedBook

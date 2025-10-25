@@ -2,10 +2,30 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 
+
+"""
+## When you create a form based on a model, like User, you use a Meta class to tell Django:
+“This form is linked to this model, and should include these fields.”
+ 
+## The Meta class is used only in model forms — forms that create or update model instances (like registering a new user).
+
+## widgets==> define how the field should look and behave in the browser i.e forms.TextInput
+
+## strip=False==> it means that leading and trailing whitespace will be preserved in the input.
+
+## The UserCreationForm is a ModelForm — a type of Django form that is designed to:
+Create or update a model instance in the database (like a User). The meta is used to specify which model 
+and fields to include in the form and save to the database.
+
+## AuthenticationForm: Just validates user credentials against existing data — 
+no need to save or create, so it doesn’t need a Meta class.
+"""
+
+# Dropdown options for gender
 GENDER_CHOICES = [
-    ('M', 'Male'),
-    ('F', 'Female'),
-    ('U', 'Unknown'),
+    ('Male', 'Male'),
+    ('Female', 'Female'),
+    ('Unknown', 'Unknown'),
 ]
 
 
@@ -15,6 +35,7 @@ class CustomUserCreationForm(UserCreationForm):
         "placeholder": "Enter your email"
     }))
 
+    #it creates a dropdown for gender
     gender = forms.ChoiceField(
         choices=GENDER_CHOICES,
         widget=forms.Select(attrs={"class": "form-select"}),
