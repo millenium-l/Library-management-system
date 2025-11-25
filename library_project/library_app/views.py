@@ -267,12 +267,15 @@ def manage_requests(request):
     pending_requests = BookRequest.objects.filter(status='pending').order_by('-request_date')# waiting for approval
     approved_requests = BookRequest.objects.filter(status='approved').order_by('-request_date')# already approved
     rejected_requests = BookRequest.objects.filter(status='rejected').order_by('-request_date')# already rejected
+    returned_requests = BookRequest.objects.filter(status='returned').order_by('-request_date')# already returned
 
     context = {
         'title': 'Manage Book Requests',
         'pending_requests': pending_requests,
         'approved_requests': approved_requests,
         'rejected_requests': rejected_requests,
+        'returned_requests': returned_requests,
+        
     }
     return render(request, 'library_app/manage_requests.html', context)
 

@@ -114,4 +114,45 @@
 </table>
 {% else %}
 <p>No rejected requests.</p>
-{% endif %} {% endblock %}
+{% endif %}
+
+
+
+<hr />
+
+
+<!-- Working on returned books  -->
+<h2 class="mb-3">Returned Book Requests</h2>
+{% if returned_requests %}
+<table class="table table-bordered">
+  <thead>
+    <tr>
+      <th>User</th>
+      <th>Book</th>
+      <th>Request Date</th>
+      <th>Status</th>
+      <th>Approved By</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for req in returned_requests %}
+    <tr>
+      <td>{{ req.user.username }}</td>
+      <td>{{ req.book.title }}</td>
+      <td>{{ req.request_date|date:"M d, Y H:i" }}</td>
+      <td><span class="badge bg-primary">{{ req.status }}</span></td>
+      <td>
+        <span
+          >{% if req.approved_by %} {{ req.approved_by.username }} {% else %} -
+          {% endif %}</span
+        >
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<p>No returned requests.</p>
+{% endif %}
+
+{% endblock %}
