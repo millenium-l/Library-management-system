@@ -1,0 +1,6 @@
+# .gitignore
+library_project/db.sqlite3
+library_project/__pycache__/
+*.pyc
+.tenv/
+
