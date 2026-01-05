@@ -1,4 +1,17 @@
 {% extends 'base.html' %} {% block content %}
+<form method="get" action="" class="d-flex mb-3">
+    <input
+      type="text"
+      name="q"
+      class="form-control me-2"
+      placeholder="Search books by title, author, or ISBN"
+      value="{{ query }}"
+    />
+    <button type="submit" class="btn btn-outline-primary">Search</button>
+  </form>
+
+
+
 
 <h2 class="mb-3">Pending Book Requests</h2>
 {% if pending_requests %}
