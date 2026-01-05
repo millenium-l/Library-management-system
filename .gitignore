@@ -1,13 +1,5 @@
-# Ignore database
-library_project/db.sqlite3
-
-# Python cache
-library_project/__pycache__/
+.tenv/
 __pycache__/
 *.pyc
-
-# Virtual environment
-.tenv/
-
-# Environment variables
 .env
+db.sqlite3
