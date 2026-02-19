@@ -55,6 +55,7 @@ def book_list(request):
     if query:
         books = books.filter(
             Q(title__icontains=query) |
+            Q(category__icontains=query) |
             Q(author__icontains=query) |
             Q(isbn__icontains=query)
         )
@@ -264,43 +265,21 @@ from django.contrib.admin.views.decorators import staff_member_required
 @login_required
 @staff_member_required
 def manage_requests(request):
-
-    query = request.GET.get('q', '').strip()
-
-    user_filter = Q()
-    if query:
-        user_filter = (
-            Q(user__username__icontains=query) |
-            Q(user__email__icontains=query) |
-            Q(user__id__icontains=query)
-        )
-
-    pending_requests = BookRequest.objects.filter(
-        user_filter, status='pending'
-    ).order_by('-request_date')
-
-    approved_requests = BookRequest.objects.filter(
-        user_filter, status='approved'
-    ).order_by('-request_date')
-
-    rejected_requests = BookRequest.objects.filter(
-        user_filter, status='rejected'
-    ).order_by('-request_date')
-
-    returned_requests = BookRequest.objects.filter(
-        user_filter, status='returned'
-    ).order_by('-request_date')
+    pending_requests = BookRequest.objects.filter(status='pending').order_by('-request_date')# waiting for approval
+    approved_requests = BookRequest.objects.filter(status='approved').order_by('-request_date')# already approved
+    rejected_requests = BookRequest.objects.filter(status='rejected').order_by('-request_date')# already rejected
+    returned_requests = BookRequest.objects.filter(status='returned').order_by('-request_date')# already returned
 
     context = {
         'title': 'Manage Book Requests',
-        'query': query,
         'pending_requests': pending_requests,
         'approved_requests': approved_requests,
         'rejected_requests': rejected_requests,
         'returned_requests': returned_requests,
+        
     }
-
     return render(request, 'library_app/manage_requests.html', context)
+
 
 
 @staff_member_required
